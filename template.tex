@@ -676,6 +676,21 @@ Subject: here's a sample
 \end{frame}
 
 \begin{frame}[fragile]
+    \frametitle{Amélioration effectuées}
+    \begin{description}
+        \item[\footnotesize 04 juillet 2024] \small Envoi des rapports \texttt{DMARC} à \texttt{tech@inclusion.beta.gouv.fr} \href{https://itou-inclusion.slack.com/archives/C0412CTV63D/p1720017179142469}{(source)}
+        \item[\footnotesize 04 juillet 2024] \small Demande à Mailjet d'envoyer avec \texttt{bnc3.inclusion.beta.gouv.fr} \href{https://app.mailjet.com/support/ticket/3086287}{(source)}
+        \item[\footnotesize 05 juillet 2024] \small Envoi depuis \texttt{bnc3.inclusion.beta.gouv.fr} \href{https://app.mailjet.com/support/ticket/3086287}{(source)}
+        \item[\footnotesize 24 juillet 2024] \small Envoi des rapports \texttt{DMARC} à une boîte mail dédiée \href{https://itou-inclusion.slack.com/archives/C0412CTV63D/p1721642195612449}{(source)}
+        \item[\footnotesize 25 juillet 2024] \small Ajout de \texttt{include:spf.mailinblue.com} au \texttt{SPF} \href{https://mattermost.incubateur.net/betagouv/pl/cd8qzuqf63g7pxx61atwxs5hby}{(source)}
+        \item[\footnotesize 30 juillet 2024] \small Ajout des \texttt{ruf} à la politique \texttt{DMARC} \href{https://itou-inclusion.slack.com/archives/C0412CTV63D/p1722332747632659}{(source)}
+        \item[\footnotesize 02 octobre 2024] \small Ajout de \texttt{include:bnc3.inclusion.beta.gouv.fr} au \texttt{SPF} \href{https://itou-inclusion.slack.com/docs/TQ3MK2T9S/F07Q3HANGTE}{(source)}
+        \item[\footnotesize 08 octobre 2024] \small Remplacement de \texttt{include:spf.sendinblue.com} dans le \texttt{SPF} par \texttt{include:spf.brevo.com} \href{https://mattermost.incubateur.net/betagouv/pl/8ys763r4ijygb81asch4sf5kxc}{(source)}
+        \item[\footnotesize 09 octobre 2024] \small Retrait des \texttt{ruf} de la politique \texttt{DMARC} \href{https://itou-inclusion.slack.com/archives/C0412CTV63D/p1728461567901209}{(source)}
+    \end{description}
+\end{frame}
+
+\begin{frame}[fragile]
     \frametitle{Améliorer cette réputation ?}
     \begin{itemize}
         \pause
@@ -688,7 +703,7 @@ $ dig +short TXT inclusion.beta.gouv.fr
         \item[2.] DMARC :
             \begin{minted}[bgcolor=LightGray,fontsize=\scriptsize]{text}
 $ dig +short TXT _dmarc.inclusion.beta.gouv.fr
-"v=DMARC1;p=none;rua=[...];ruf=[...]"
+"v=DMARC1;p=none;rua=[...]"
             \end{minted}
     \end{itemize}
 \end{frame}
