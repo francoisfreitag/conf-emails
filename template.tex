@@ -227,7 +227,7 @@ $ dig +short TXT inclusion.beta.gouv.fr
 
     \begin{description}
         \item[\texttt{"+"}] \textbf{pass} (default, can be omitted), authorized
-        \item[\texttt{"-"}] \textbf{fail} not authorized
+        \item[\texttt{"-"}] \textbf{fail} not authorized (\href{https://www.mailhardener.com/blog/why-mailhardener-recommends-spf-softfail-over-fail}{discouraged})
         \item[\texttt{"\~{}"}] \textbf{softfail} probably not authorized
         \item[\texttt{"?"}] \textbf{neutral} not asserting whether the IP address is authorized
     \end{description}
@@ -264,6 +264,79 @@ dig +short TXT _spf.alwaysdata.com
         \item[\textbf{3.}] \texttt{dig TXT <DOMAIN> | grep spf}
         \item[\textbf{4.}] Vérifier la correspondance entre l'IP de l'étape 1. et la politique SPF
     \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\href{https://www.mailhardener.com/blog/why-mailhardener-recommends-spf-softfail-over-fail\#the-spf-bypass-vulnerability}{SPF bypass}}
+    \foreignquote{english}{
+        SPF uses the \texttt{rfc5321.MailFrom} address to determine the 'sender
+        domain', which is where the SPF policy is fetched from.
+
+        \vspace{0.3cm}
+
+        However, the \texttt{rfc5321.MailFrom} address is not visible to the
+        receiver, who only sees the \texttt{rfc5322.From} address as the
+        sender. The flaw here is that the 'sender domain' and the domain used
+        in the sender's email address do not have to match.
+    }
+
+    \begin{minted}[bgcolor=LightGray,fontsize=\scriptsize]{text}
+telnet target.mailserver.com 25
+helo attackerdomain.com
+mail from: attacker@attackerdomain.com  <--- MAIL FROM matches HELO: OK
+rcpt to: target@target.com
+data  <--- Everything from here down is presented to the user.
+from: "Sender, Legitimate" <Legitimate_Sender@spoofed.com>
+to: target@target.com.au
+subject: Presentation - Email Demo
+This is a test
+
+.
+    \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\href{https://www.mailhardener.com/blog/spf-lookup-limit-explained\#the-lookup-limit}{SPF lookup limit}}
+
+    Maximum 10 requêtes DNS pour une validation SPF.
+
+    \begin{minted}[bgcolor=LightGray,fontsize=\scriptsize]{bash}
+$ dig +short TXT _spf.google.com
+"v=spf1 include:_netblocks.google.com "
+    "include:_netblocks2.google.com "
+    "include:_netblocks3.google.com ~all"
+    \end{minted}
+
+    \pause
+
+    4 requêtes.
+
+    \begin{minted}[bgcolor=LightGray,fontsize=\scriptsize]{bash}
+$ dig +short TXT bnc3.mailjet.com
+"v=spf1 a include:spf.mailjet.com -all"
+    \end{minted}
+
+    \pause
+
+    2 requêtes.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\href{https://www.mailhardener.com/blog/spf-lookup-limit-explained\#the-spf-relaying-problem}{SPF relaying}}
+
+    \foreignquote{english}{
+        A relaying SMTP service relays (forwards) all incoming email to a
+        different domain. Relaying services are common for organizations that
+        have multiple domains.
+
+        \vspace{0.3cm}
+        For example: all emails from \texttt{old-company-name.com} may
+        automatically be relayed to \texttt{new-company-name.com}.
+    }
+
+    \vspace{1cm}
+
+    Après un relai, toutes les vérifications \texttt{SPF} échouent.
 \end{frame}
 
 \section{DomainKey Identified Mail}
@@ -595,6 +668,13 @@ Subject: here's a sample
   </spf>
 </auth_results>
     \end{minted}
+\end{frame}
+
+\begin{frame}{Attention à la politique \texttt{SPF}} Les \texttt{fail} (ex.
+    \texttt{-all}) de \texttt{SPF} peuvent causer l'échec d'authentification
+    d'un email et
+    \href{https://www.mailhardener.com/blog/why-mailhardener-recommends-spf-softfail-over-fail\#but-i-use-spf-hard-fail-and-never-had-a-problem}{l'arrêt
+    immédiat de l'évaluation}, \textbf{avant d'envoyer un rapport DMARC !}
 \end{frame}
 
 \begin{frame}{Rapport DMARC - RUF}
